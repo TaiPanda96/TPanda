@@ -25,22 +25,27 @@ class Data_Engine:
         symbol_list = self.symbol_list
         start = datetime.datetime(self.s_year,self.s_month,self.s_day)
         end = datetime.datetime(self.e_year,self.e_month,self.e_day)
+        allData = pd.DataFrame()
+        # symbol_list = symbol_list[0:10]
         for i in symbol_list:
             if i is not None: 
                 try:
                     df = web.DataReader(i,'yahoo',start,end)
+                    df.to_csv("/Users/hana/Desktop/" + i + ".csv")
+                    allData = allData.append(df, ignore_index=True)
                     print("{}".format(i),"FETCH SUCCESSFUL")
                 except:
                     print("{}".format(i),"Caught an Exception: Company Does Not Exist on Yahoo Finance")
                     continue
         print("Fetch is Complete")
-        return df 
+        return allData 
 
     def __str__(self):
         return 'Symbol is={},Start Year is {}, End Year is {}'.format(self.symbol_list,self.s_year,self.e_year)
     
 if __name__ == "__main__":
-    excel = "/Users/taishanlin/Desktop/Python Files/SP500_Master_Combined.xlsx"
+    excel = "/Users/hana/Desktop/stock_prediction/TPanda/SP500_Master_Combined.xlsx"
     objA = Data_Engine([],2000,1,1,2020,2,22)
     result = objA.get_stock(objA.get_symbol_list(excel))
-    print(result)
+    # print(result)
+    result.to_csv("/Users/hana/Desktop/AllData.csv")
