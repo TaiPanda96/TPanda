@@ -31,6 +31,7 @@ class Data_Engine:
             if i is not None: 
                 try:
                     df = web.DataReader(i,'yahoo',start,end)
+                    df['Company'] = i 
                     df.to_csv("/Users/hana/Desktop/" + i + ".csv")
                     allData = allData.append(df, ignore_index=True)
                     print("{}".format(i),"FETCH SUCCESSFUL")
