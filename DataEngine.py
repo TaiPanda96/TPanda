@@ -26,10 +26,14 @@ class Data_Engine:
         start = datetime.datetime(self.s_year,self.s_month,self.s_day)
         end = datetime.datetime(self.e_year,self.e_month,self.e_day)
         for i in symbol_list:
-            if i == None: 
-                i +=1 
-                continue
-            else: df = web.DataReader(i,'yahoo',start,end)
+            if i is not None: 
+                try:
+                    df = web.DataReader(i,'yahoo',start,end)
+                    print("{}".format(i),"FETCH SUCCESSFUL")
+                except:
+                    print("{}".format(i),"Caught an Exception: Company Does Not Exist on Yahoo Finance")
+                    continue
+        print("Fetch is Complete")
         return df 
 
     def __str__(self):
@@ -38,6 +42,5 @@ class Data_Engine:
 if __name__ == "__main__":
     excel = "/Users/taishanlin/Desktop/Python Files/SP500_Master_Combined.xlsx"
     objA = Data_Engine([],2000,1,1,2020,2,22)
-    objA.__str__()
-    print(objA.get_symbol_list(excel))
-    print(objA.get_stock(objA.get_symbol_list(excel)))
+    result = objA.get_stock(objA.get_symbol_list(excel))
+    print(result)
