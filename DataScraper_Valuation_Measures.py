@@ -1,10 +1,15 @@
-import pandas as pd 
-import numpy as np 
+# Key Data Structure Libraries
+import pandas as pd
+import numpy as np
+
+# Key Functional Libraries
+from collections import OrderedDict
+from collections import ChainMap
 from DataEngine import Data_Engine
-import pandas as pd 
 import xml.etree.ElementTree as etree
 from lxml import objectify
-from collections import OrderedDict
+
+# Key File Converter Library
 import xlsxwriter as xlsx
 
 class Valuation:
@@ -36,20 +41,24 @@ class Run:
         self.options    = Valuation('https://ca.finance.yahoo.com/quote/','options?p=','SP500_Master_Combined.xlsx')
         self.financials = Valuation('https://ca.finance.yahoo.com/quote/','financials?p=','SP500_Master_Combined.xlsx')
         self.cash_flow  = Valuation('https://ca.finance.yahoo.com/quote/','cash-flow?p=','SP500_Master_Combined.xlsx')
+        self.eps        = Valuation('https://ca.finance.yahoo.com/quote/','analysis?p=','SP500_Master_Combined.xlsx')
     
     def construct(self):
         self.options.file_constructor()
         self.financials.file_constructor()
         self.cash_flow.file_constructor()
+        self.eps.file_constructor()
 
     def run(self):
         A = list(self.options.get_symbol())
         B = list(self.financials.get_symbol())
         C = list(self.cash_flow.get_symbol())
+        D = list(self.eps.get_symbol())
         dict_db = {
             'A': A,
             'B': B,
-            'C': C,}
+            'C': C,
+            'D': D,}
         return pd.DataFrame.from_dict(dict_db, orient='columns')
 
 ## Pseudo Code Below
