@@ -1,3 +1,4 @@
+## Import Libraries Used
 import pandas as pd 
 import numpy as np
 import lxml as lxml
@@ -7,9 +8,11 @@ from time import sleep
 import xlsxwriter as xlsx
 import itertools
 
+# Classes Used from Another File
 from DataEngine import Data_Engine
 import xml.etree.ElementTree as etree
 
+# Scraping Libraries Used
 import time, requests, lxml
 from collections import OrderedDict
 from bs4 import BeautifulSoup
@@ -40,10 +43,10 @@ class Valuation:
 
 class Run:
     def __init__(self):
-        self.options    = Valuation('https://ca.finance.yahoo.com/quote/','options?p=','SP500_Master_Combined.xlsx')
-        self.financials = Valuation('https://ca.finance.yahoo.com/quote/','financials?p=','SP500_Master_Combined.xlsx')
-        self.cash_flow  = Valuation('https://ca.finance.yahoo.com/quote/','cash-flow?p=','SP500_Master_Combined.xlsx')
-        self.analysis   = Valuation('https://ca.finance.yahoo.com/quote/','analysis?p=','SP500_Master_Combined.xlsx')
+        self.options    = Valuation('https://ca.finance.yahoo.com/quote/','/options?p=/','SP500_Master_Combined.xlsx')
+        self.financials = Valuation('https://ca.finance.yahoo.com/quote/','/financials?p=/','SP500_Master_Combined.xlsx')
+        self.cash_flow  = Valuation('https://ca.finance.yahoo.com/quote/','/cash-flow?p=/','SP500_Master_Combined.xlsx')
+        self.analysis   = Valuation('https://ca.finance.yahoo.com/quote/','/analysis?p=/','SP500_Master_Combined.xlsx')
     
     def construct(self):
         self.options.file_constructor()
@@ -63,6 +66,10 @@ class Run:
             'D': D,}
         return pd.DataFrame.from_dict(dict_db, orient='columns')
 
+def website_request(url):
+    response = requests.get(url)
+    return response
+
 def get_soup(url):
     EPS = []
     EPS_data = []
@@ -70,7 +77,6 @@ def get_soup(url):
     EPS_data_3 = []
     EPS_data_4 = []
     try:
-        website_request(url)
         response = website_request(url)
         for url in response:
             data = response.text
@@ -98,34 +104,51 @@ def get_soup(url):
             return table
     except:
         print('Error in Request')
-    
 
-def get_earnings_table(Run):
+def symbol_list():
+    excel = '/Users/taishanlin/Desktop/Python Files/SP500_Master_Combined.xlsx'
+    df = pd.read_excel(excel)
+    company_ticker = list(df['ID'])
+    return company_ticker
+
+
+def get_earnings_table(input_url):
     allEarnings = pd.DataFrame()
-    raw_table = Run.run()
-    data = raw_table['D']
-    symbol_list = list(Data_Engine.get_symbol_list)
+    symbols = symbol_list()
+    data = input_url
     idx = 0
     if idx > len(data):
         print('There is no data for this company')
     else:
-        while idx <= len(data['D']):
-            for url in data['D']:
-                earnings_data = get_soup(url)
-                for j in symbol_list:
-                    earnings_data.to_csv("/Users/taishanlin/Desktop/Python Files/Earnings Table/" + j + ".csv")
-                    allEarnings.append(earnings_data,ignore_index=True)
+        while idx <= len(data):
+            for j in symbols:
+                try:
+                    for url in data:
+                        earnings_data = get_soup(url)
+                        earnings_data.to_csv("/Users/taishanlin/Desktop/Django Documentation/Earnings Table/" + j + ".csv")
+                        print("{}".format(j),"FETCH SUCCESSFUL")
+                        j += 1
+                except:
+                    continue
+        allEarnings.append(earnings_data,ignore_index=True)
     return allEarnings
 
-                
 
 if __name__ == "__main__":
-    # Below code 
+    #Below code checks that the class Valuation can be called by class Runs
     obj1 = Run()
     x = obj1.construct
-    print(x())
-    y = obj1.run
-    print(y())
+    x()
+    url = obj1.run()
+    input_url = url['D']
+    get_earnings_table(input_url)
+    ## Ignore: this is just some test code for soup function
     #url = 'https://ca.finance.yahoo.com/quote/ABBV/analysis?p=ABBV'
+    #print(get_soup(url))
+
+    ## Ignore: this is just some test code for static method.
+    #test = symbol_list()
+    #print(test)
+    #print(input_url)
 
    
