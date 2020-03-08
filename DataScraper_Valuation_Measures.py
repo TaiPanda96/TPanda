@@ -61,27 +61,6 @@ class Run:
             'D': D,}
         return pd.DataFrame.from_dict(dict_db, orient='columns')
 
-## Pseudo Code Below
-
-
-# while index value for a <= len(column A), b <= len(column B), and c= <len(column C)
-    ## for each url in column A:
-        ## send request to Yahoo
-        ## try scrape by XPath 
-        ## if None, try scrape by Beautiful Soup
-        #  if still not possible, raise exception 
-
-    ## for each url in column B:
-        ## send request to Yahoo
-        ## try scrape by XPath 
-        ## if None, try scrape by Beautiful Soup
-        #  if still not possible, raise exception 
-
-    ## for each url in column C:
-        ## send request to Yahoo
-        ## try scrape by XPath 
-        ## if None, try scrape by Beautiful Soup
-        #  if still not possible, raise exception 
 
 if __name__ == "__main__":
     obj1 = Run()
