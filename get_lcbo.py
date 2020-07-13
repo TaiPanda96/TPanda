@@ -65,7 +65,6 @@ def get_tags(url):
        
 
 def table(items_map):
-    items_map = get_tags(url)
     data = pd.DataFrame().from_dict(data=items_map,orient='columns')
 
     prod_data  = data.iloc[1:,0]
